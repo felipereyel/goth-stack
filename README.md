@@ -1,2 +1,2 @@
-# go-ssr
+# gossr
 Go Server with SSR templates
