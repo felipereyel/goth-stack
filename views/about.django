@@ -1,3 +1,0 @@
-{% include "partials/header.django" %}
-
-<h1>{{ Message }}</h1>
