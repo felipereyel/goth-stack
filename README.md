@@ -15,9 +15,9 @@
 - Migrations
 
 ## Next TODOs:
-- [ ] SQL Autogeneration with [sqlc](https://github.com/sqlc-dev/sqlc)
-- [ ] JWT cookie auth
 - [ ] OIdC auth
+- [ ] JWT cookie auth
+- [ ] SQL Autogeneration with [sqlc](https://github.com/sqlc-dev/sqlc)
 - [ ] Password hash with [this](https://gowebexamples.com/password-hashing/)
 
 ## Templ
