@@ -15,7 +15,9 @@ RUN go build -o ./goapp
 # Build the final image
 FROM alpine:latest as release
 COPY --from=goapp /app/goapp /goapp
+
 COPY migrations/ /migrations
+ENV MIGRATIONS_DIR=/migrations
 
 WORKDIR /app
 CMD ["/goapp", "start"]

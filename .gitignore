@@ -25,6 +25,7 @@ go.work
 
 # Database
 db.sqlite3
+db.sqlite
 
 # Air
 tmp

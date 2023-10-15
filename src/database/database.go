@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"goth/src/config"
 
-	_ "github.com/mattn/go-sqlite3"
+	_ "modernc.org/sqlite"
 )
 
 type Database struct {
@@ -16,7 +16,7 @@ func (db *Database) Close() error {
 }
 
 func New() (*Database, error) {
-	conn, err := sql.Open("sqlite3", config.Configs.DataBaseURL)
+	conn, err := sql.Open("sqlite", config.Configs.DataBaseURL)
 	if err != nil {
 		return nil, err
 	}

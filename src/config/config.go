@@ -20,7 +20,7 @@ func initConfigs() tconfigs {
 	if envDataBaseURL != "" {
 		config.DataBaseURL = envDataBaseURL
 	} else {
-		config.DataBaseURL = "db.sqlite3"
+		config.DataBaseURL = "db.sqlite"
 	}
 
 	envDataBaseName := os.Getenv("DATABASE_NAME")
