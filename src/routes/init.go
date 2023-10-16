@@ -1,11 +1,24 @@
 package routes
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"fmt"
+	"goth/src/controllers"
+	"goth/src/repositories/database"
 
-func Init(app *fiber.App) {
-	app.Use("/healthz", HealthCheck)
+	"github.com/gofiber/fiber/v2"
+)
 
-	app.Get("/", Home)
+func Init(app *fiber.App) error {
+	database, err := database.NewDatabaseRepo()
+	if err != nil {
+		return fmt.Errorf("[Init] failed to get database: %w", err)
+	}
 
-	app.Use(NotFound)
+	tc := controllers.NewTaskController(database)
+	initTaskRoutes(app, tc)
+
+	app.Use("/healthz", healthCheckHandler)
+	app.Use(notFoundHandler)
+
+	return nil
 }

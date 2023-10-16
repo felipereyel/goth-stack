@@ -7,8 +7,9 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func Error(c *fiber.Ctx, err error) error {
+func ErrorHandler(c *fiber.Ctx, err error) error {
 	fmt.Printf("Route Error [%s]: %v\n", c.Path(), err)
+	c.SendStatus(500)
 	errorComponent := components.Error()
-	return fullPageRender(c, errorComponent, "Internal Error")
+	return fullPageRender(c, errorComponent, "")
 }
