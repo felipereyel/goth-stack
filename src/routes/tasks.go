@@ -1,7 +1,6 @@
 package routes
 
 import (
-	"fmt"
 	"goth/src/components"
 	"goth/src/controllers"
 
@@ -55,8 +54,6 @@ func taskEdit(tc *controllers.TaskController) fiber.Handler {
 		if err != nil {
 			return err
 		}
-
-		fmt.Printf("task: %+v\n", task)
 
 		editComponent := components.TaskEdit(task)
 		return fullPageRender(c, editComponent, "Task Editor")
