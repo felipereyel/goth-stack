@@ -1,7 +1,22 @@
 package components
 
-templ Home(msg string) {
-    <div>
-        <h1 class="font-bold text-xl">{ msg }</h1>
+type HomeTask struct {
+    Id string
+    Title string
+}
+
+templ Home(tasks []HomeTask) {
+    <div class="mt-32">
+        <div class="px-4 sm:px-8 max-w-5xl m-auto">
+            <h1 class="text-center font-semibold text-sm">Tasks</h1>
+            <p class="mt-2 text-center text-xs mb-4 text-gray-500">Open Tasks To Do</p>
+            <ul class="border border-slate-600 rounded overflow-hidden shadow-md">
+                for _, task := range tasks {
+                    <li class="px-4 py-2 bg-slate-800 hover:bg-sky-100 hover:text-sky-900 border-b last:border-none border-slate-600 transition-all duration-300 ease-in-out">
+                        <a href={ templ.URL("/tasks/" + task.Id) }>{task.Title}</a>
+                    </li>
+                }
+            </ul>
+        </div>
     </div>
 }

@@ -7,44 +7,48 @@ import (
 )
 
 type tconfigs struct {
+	AutoMigrate   bool
 	MigrationsDir string
 	ServerAddress string
 	DataBaseURL   string
 	DataBaseName  string
 }
 
-func initConfigs() tconfigs {
-	var config = tconfigs{}
+var Configs tconfigs
 
+func init() {
 	envDataBaseURL := os.Getenv("DATABASE_URL")
 	if envDataBaseURL != "" {
-		config.DataBaseURL = envDataBaseURL
+		Configs.DataBaseURL = envDataBaseURL
 	} else {
-		config.DataBaseURL = "db.sqlite"
+		Configs.DataBaseURL = "db.sqlite"
 	}
 
 	envDataBaseName := os.Getenv("DATABASE_NAME")
 	if envDataBaseName != "" {
-		config.DataBaseName = envDataBaseName
+		Configs.DataBaseName = envDataBaseName
 	} else {
-		config.DataBaseName = "goth"
+		Configs.DataBaseName = "goth"
+	}
+
+	envAutoMigrate := os.Getenv("AUTO_MIGRATE")
+	if envAutoMigrate != "" {
+		Configs.AutoMigrate = envAutoMigrate == "true"
+	} else {
+		Configs.AutoMigrate = true
 	}
 
 	envMigrationsDir := os.Getenv("MIGRATIONS_DIR")
 	if envMigrationsDir != "" {
-		config.MigrationsDir = envMigrationsDir
+		Configs.MigrationsDir = envMigrationsDir
 	} else {
-		config.MigrationsDir = "migrations"
+		Configs.MigrationsDir = "migrations"
 	}
 
 	envPort := os.Getenv("PORT")
 	if envPort != "" {
-		config.ServerAddress = ":" + envPort
+		Configs.ServerAddress = ":" + envPort
 	} else {
-		config.ServerAddress = ":3000"
+		Configs.ServerAddress = ":3000"
 	}
-
-	return config
 }
-
-var Configs = initConfigs()
