@@ -23,13 +23,7 @@ func taskList(tc *controllers.TaskController) fiber.Handler {
 			return err
 		}
 
-		if len(tasks) == 0 {
-			emptyComponent := components.EmptyTaskList()
-			return fullPageRender(c, emptyComponent, "Task List")
-		}
-
-		listComponent := components.TaskList(tasks)
-		return fullPageRender(c, listComponent, "Task List")
+		return sendPage(c, components.TaskListPage(tasks))
 	}
 }
 
@@ -55,8 +49,7 @@ func taskEdit(tc *controllers.TaskController) fiber.Handler {
 			return err
 		}
 
-		editComponent := components.TaskEdit(task)
-		return fullPageRender(c, editComponent, "Task Editor")
+		return sendPage(c, components.TaskEditPage(task))
 	}
 }
 

@@ -9,7 +9,9 @@ import (
 
 func ErrorHandler(c *fiber.Ctx, err error) error {
 	fmt.Printf("Route Error [%s]: %v\n", c.Path(), err)
-	c.SendStatus(500)
-	errorComponent := components.Error()
-	return fullPageRender(c, errorComponent, "")
+	return sendPage(c, components.ErrorPage())
+}
+
+func notFoundHandler(c *fiber.Ctx) error {
+	return sendPage(c, components.NotFoundPage())
 }
