@@ -23,13 +23,23 @@ func getUser(c *fiber.Ctx) (models.User, error) {
 	return user, nil
 }
 
+func redirectToAuth(uc *controllers.UserController, c *fiber.Ctx, saveState bool) error {
+	var b64State string
+	if saveState {
+		b64State = base64.StdEncoding.EncodeToString([]byte(c.Path()))
+	}
+
+	c.ClearCookie(cookieName)
+	return c.Redirect(uc.GetAuthorizeURL(b64State))
+}
+
 func loginHandler(uc *controllers.UserController) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		return c.Redirect(uc.GetAuthorizeURL(""))
+		return redirectToAuth(uc, c, false)
 	}
 }
 
-func authRedirect(uc *controllers.UserController) fiber.Handler {
+func redirectHandler(uc *controllers.UserController) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		code := c.Query("code")
 		if code == "" {
@@ -57,22 +67,16 @@ func authRedirect(uc *controllers.UserController) fiber.Handler {
 	}
 }
 
-func redirectToAuth(uc *controllers.UserController, c *fiber.Ctx) error {
-	c.ClearCookie(cookieName)
-	b64State := base64.StdEncoding.EncodeToString([]byte(c.Path()))
-	return c.Redirect(uc.GetAuthorizeURL(b64State))
-}
-
-func verifyAuth(uc *controllers.UserController) fiber.Handler {
+func withAuth(uc *controllers.UserController) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		jwt := c.Cookies(cookieName)
 		if jwt == "" {
-			return redirectToAuth(uc, c)
+			return redirectToAuth(uc, c, true)
 		}
 
 		user, err := uc.VerifyCookie(jwt)
 		if err != nil {
-			return redirectToAuth(uc, c)
+			return redirectToAuth(uc, c, true)
 		}
 
 		setUser(c, user)

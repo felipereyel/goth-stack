@@ -36,13 +36,13 @@ func Init(app *fiber.App, cfg config.ServerConfigs) error {
 	uc := controllers.NewUserController(dbRepo, oidcRepo, jwtRepo)
 	tc := controllers.NewTaskController(dbRepo, oidcRepo)
 
-	app.Get("/auth/redirect", authRedirect(uc))
+	app.Get("/auth/redirect", redirectHandler(uc))
 	app.Get("/auth/login", loginHandler(uc))
 
-	app.Get("/", verifyAuth(uc), taskList(tc))
-	app.Get("/new", verifyAuth(uc), taskNew(tc))
-	app.Get("/edit/:id", verifyAuth(uc), taskEdit(tc))
-	app.Post("/edit/:id", verifyAuth(uc), taskSave(tc))
+	app.Get("/", withAuth(uc), taskList(tc))
+	app.Get("/new", withAuth(uc), taskNew(tc))
+	app.Get("/edit/:id", withAuth(uc), taskEdit(tc))
+	app.Post("/edit/:id", withAuth(uc), taskSave(tc))
 
 	app.Use("/healthz", healthCheckHandler)
 	app.Use(notFoundHandler)
