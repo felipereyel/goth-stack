@@ -32,7 +32,10 @@ func Init(app *fiber.App, cfg config.ServerConfigs) error {
 	tc := controllers.NewTaskController(dbRepo, oidcRepo)
 
 	app.Get("/auth/login", loginHandler(uc))
-	app.Get("/auth/redirect", redirectHandler(uc))
+	app.Get("/auth/post-login", postLoginHandler(uc))
+
+	app.Get("/auth/logout", logoutHandler(uc))
+	app.Get("/auth/post-logout", postLogoutHandler(uc))
 
 	app.Get("/", withAuth(uc, tc, taskList))
 	app.Get("/new", withAuth(uc, tc, taskNew))

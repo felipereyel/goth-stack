@@ -14,11 +14,11 @@ type ServerConfigs struct {
 	DataBaseURL string
 	JwtSecret   string
 
-	OIDCIssuer            string
-	OIDCClientID          string
-	OIDCClientSec         string
-	OIDCRedirectURI       string
-	OIDCLogoutRedirectURI string
+	OIDCIssuer                string
+	OIDCClientID              string
+	OIDCClientSec             string
+	OIDCRedirectURI           string
+	OIDCPostLogoutRedirectURI string
 }
 
 func GetServerConfigs() ServerConfigs {
@@ -56,9 +56,9 @@ func GetServerConfigs() ServerConfigs {
 		panic("Missing OIDC_REDIRECT_URI")
 	}
 
-	config.OIDCLogoutRedirectURI = os.Getenv("OIDC_LOGOUT_REDIRECT_URI")
-	if config.OIDCLogoutRedirectURI == "" {
-		panic("Missing OIDC_LOGOUT_REDIRECT_URI")
+	config.OIDCPostLogoutRedirectURI = os.Getenv("OIDC_POST_LOGOUT_REDIRECT_URI")
+	if config.OIDCPostLogoutRedirectURI == "" {
+		panic("Missing OIDC_POST_LOGOUT_REDIRECT_URI")
 	}
 
 	// optional - with defaults

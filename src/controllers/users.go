@@ -23,6 +23,10 @@ func (uc *UserController) GetAuthorizeURL(b64State string) string {
 	return uc.oidcRepo.GetAuthorizeURL("openid profile email", b64State)
 }
 
+func (uc *UserController) GetLogoutURL() string {
+	return uc.oidcRepo.GetLogoutURL()
+}
+
 func (uc *UserController) VerifyCookie(token string) (models.User, error) {
 	id, err := uc.jwtRepo.ParseJWT(token)
 	if err != nil {

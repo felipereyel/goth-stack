@@ -14,13 +14,15 @@ type oidcWellKnown struct {
 	AuthorizationEndpoint string `json:"authorization_endpoint"`
 	TokenEndpoint         string `json:"token_endpoint"`
 	UserInfoEndpoint      string `json:"userinfo_endpoint"`
+	EndSessionEndpoint    string `json:"end_session_endpoint"`
 }
 
 type oidc struct {
-	wellKnown    oidcWellKnown
-	clientID     string
-	clientSecret string
-	redirectURI  string
+	wellKnown             oidcWellKnown
+	clientID              string
+	clientSecret          string
+	redirectURI           string
+	postLogoutRedirectURI string
 }
 
 func NewOIDC(cfg config.ServerConfigs) (OIDC, error) {
@@ -37,10 +39,11 @@ func NewOIDC(cfg config.ServerConfigs) (OIDC, error) {
 	}
 
 	return &oidc{
-		wellKnown:    wellKnown,
-		clientID:     cfg.OIDCClientID,
-		clientSecret: cfg.OIDCClientSec,
-		redirectURI:  cfg.OIDCRedirectURI,
+		wellKnown:             wellKnown,
+		clientID:              cfg.OIDCClientID,
+		clientSecret:          cfg.OIDCClientSec,
+		redirectURI:           cfg.OIDCRedirectURI,
+		postLogoutRedirectURI: cfg.OIDCPostLogoutRedirectURI,
 	}, nil
 }
 
@@ -52,7 +55,15 @@ func (o *oidc) GetAuthorizeURL(scope, state string) string {
 	query.Set("scope", scope)
 	query.Set("state", state)
 
-	return fmt.Sprintf("%s/oauth/v2/authorize?%s", o.wellKnown.Issuer, query.Encode())
+	return fmt.Sprintf("%s?%s", o.wellKnown.AuthorizationEndpoint, query.Encode())
+}
+
+func (o *oidc) GetLogoutURL() string {
+	query := url.Values{}
+	query.Set("client_id", o.clientID)
+	query.Set("post_logout_redirect_uri", o.postLogoutRedirectURI)
+
+	return fmt.Sprintf("%s?%s", o.wellKnown.EndSessionEndpoint, query.Encode())
 }
 
 func (o *oidc) getTokens(code string) (string, int, error) {

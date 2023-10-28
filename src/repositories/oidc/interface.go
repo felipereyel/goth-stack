@@ -12,5 +12,6 @@ type UserInfoResponse struct {
 
 type OIDC interface {
 	GetAuthorizeURL(scope, state string) string
+	GetLogoutURL() string
 	GetUser(code string) (UserInfoResponse, time.Time, error)
 }

@@ -14,19 +14,19 @@ func withAuth[C controllers.Controllers](uController *controllers.UserController
 	return func(ctx *fiber.Ctx) error {
 		jwt := ctx.Cookies(cookieName)
 		if jwt == "" {
-			return redirectToAuth(uController, ctx, true)
+			return redirectToAuthLogin(uController, ctx, true)
 		}
 
 		user, err := uController.VerifyCookie(jwt)
 		if err != nil {
-			return redirectToAuth(uController, ctx, true)
+			return redirectToAuthLogin(uController, ctx, true)
 		}
 
 		return handler(controller, ctx, user)
 	}
 }
 
-func redirectToAuth(uc *controllers.UserController, c *fiber.Ctx, saveState bool) error {
+func redirectToAuthLogin(uc *controllers.UserController, c *fiber.Ctx, saveState bool) error {
 	var b64State string
 	if saveState {
 		b64State = base64.StdEncoding.EncodeToString([]byte(c.Path()))
@@ -38,11 +38,11 @@ func redirectToAuth(uc *controllers.UserController, c *fiber.Ctx, saveState bool
 
 func loginHandler(uc *controllers.UserController) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		return redirectToAuth(uc, c, false)
+		return redirectToAuthLogin(uc, c, false)
 	}
 }
 
-func redirectHandler(uc *controllers.UserController) fiber.Handler {
+func postLoginHandler(uc *controllers.UserController) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		code := c.Query("code")
 		if code == "" {
@@ -66,6 +66,19 @@ func redirectHandler(uc *controllers.UserController) fiber.Handler {
 			return c.Redirect(string(locationBytes))
 		}
 
+		return c.Redirect("/")
+	}
+}
+
+func logoutHandler(uc *controllers.UserController) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		c.ClearCookie(cookieName)
+		return c.Redirect(uc.GetLogoutURL())
+	}
+}
+
+func postLogoutHandler(uc *controllers.UserController) fiber.Handler {
+	return func(c *fiber.Ctx) error {
 		return c.Redirect("/")
 	}
 }
