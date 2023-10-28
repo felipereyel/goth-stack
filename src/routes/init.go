@@ -11,7 +11,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func healthCheckHandler(c *fiber.Ctx) error {
+func healthzHandler(c *fiber.Ctx) error {
 	return c.SendStatus(fiber.StatusOK)
 }
 
@@ -36,15 +36,15 @@ func Init(app *fiber.App, cfg config.ServerConfigs) error {
 	uc := controllers.NewUserController(dbRepo, oidcRepo, jwtRepo)
 	tc := controllers.NewTaskController(dbRepo, oidcRepo)
 
-	app.Get("/auth/redirect", redirectHandler(uc))
 	app.Get("/auth/login", loginHandler(uc))
+	app.Get("/auth/redirect", redirectHandler(uc))
 
-	app.Get("/", withAuth(uc), taskList(tc))
-	app.Get("/new", withAuth(uc), taskNew(tc))
-	app.Get("/edit/:id", withAuth(uc), taskEdit(tc))
-	app.Post("/edit/:id", withAuth(uc), taskSave(tc))
+	app.Get("/", withAuth(uc, tc, taskList))
+	app.Get("/new", withAuth(uc, tc, taskNew))
+	app.Get("/edit/:id", withAuth(uc, tc, taskEdit))
+	app.Post("/edit/:id", withAuth(uc, tc, taskSave))
 
-	app.Use("/healthz", healthCheckHandler)
+	app.Use("/healthz", healthzHandler)
 	app.Use(notFoundHandler)
 
 	return nil

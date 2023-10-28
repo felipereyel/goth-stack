@@ -10,14 +10,19 @@ import (
 
 const cookieName = "goth:jwt"
 
-func withUser(handler func(user models.User, c *fiber.Ctx) error) fiber.Handler {
-	return func(c *fiber.Ctx) error {
-		user, ok := c.Locals("user").(models.User)
-		if !ok {
-			return fiber.ErrUnauthorized
+func withAuth[C controllers.Controllers](uController *controllers.UserController, controller *C, handler func(*C, *fiber.Ctx, models.User) error) fiber.Handler {
+	return func(ctx *fiber.Ctx) error {
+		jwt := ctx.Cookies(cookieName)
+		if jwt == "" {
+			return redirectToAuth(uController, ctx, true)
 		}
 
-		return handler(user, c)
+		user, err := uController.VerifyCookie(jwt)
+		if err != nil {
+			return redirectToAuth(uController, ctx, true)
+		}
+
+		return handler(controller, ctx, user)
 	}
 }
 
@@ -62,22 +67,5 @@ func redirectHandler(uc *controllers.UserController) fiber.Handler {
 		}
 
 		return c.Redirect("/")
-	}
-}
-
-func withAuth(uc *controllers.UserController) fiber.Handler {
-	return func(c *fiber.Ctx) error {
-		jwt := c.Cookies(cookieName)
-		if jwt == "" {
-			return redirectToAuth(uc, c, true)
-		}
-
-		user, err := uc.VerifyCookie(jwt)
-		if err != nil {
-			return redirectToAuth(uc, c, true)
-		}
-
-		c.Locals("user", user)
-		return c.Next()
 	}
 }
