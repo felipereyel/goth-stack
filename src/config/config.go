@@ -6,49 +6,98 @@ import (
 	_ "github.com/joho/godotenv/autoload"
 )
 
-type tconfigs struct {
-	AutoMigrate   bool
-	MigrationsDir string
-	ServerAddress string
-	DataBaseURL   string
-	DataBaseName  string
+type ServerConfigs struct {
+	AutoMigrate     bool
+	MigrationsDir   string
+	ServerAddress   string
+	DataBaseURL     string
+	OIDCIssuer      string
+	OIDCClientID    string
+	OIDCClientSec   string
+	OIDCRedirectURI string
+	JwtSecret       string
 }
 
-var Configs tconfigs
+func GetServerConfigs() ServerConfigs {
+	config := ServerConfigs{}
 
-func init() {
-	envDataBaseURL := os.Getenv("DATABASE_URL")
-	if envDataBaseURL != "" {
-		Configs.DataBaseURL = envDataBaseURL
-	} else {
-		Configs.DataBaseURL = "db.sqlite"
+	// mandatory
+
+	config.DataBaseURL = os.Getenv("DATABASE_URL")
+	if config.DataBaseURL == "" {
+		panic("Missing DATABASE_URL")
 	}
 
-	envDataBaseName := os.Getenv("DATABASE_NAME")
-	if envDataBaseName != "" {
-		Configs.DataBaseName = envDataBaseName
-	} else {
-		Configs.DataBaseName = "goth"
+	config.OIDCIssuer = os.Getenv("OIDC_ISSUER")
+	if config.OIDCIssuer == "" {
+		panic("Missing OIDC_ISSUER")
 	}
+
+	config.OIDCClientID = os.Getenv("OIDC_CLIENT_ID")
+	if config.OIDCClientID == "" {
+		panic("Missing OIDC_CLIENT_ID")
+	}
+
+	config.OIDCClientSec = os.Getenv("OIDC_CLIENT_SECRET")
+	if config.OIDCClientSec == "" {
+		panic("Missing OIDC_CLIENT_SECRET")
+	}
+
+	config.OIDCRedirectURI = os.Getenv("OIDC_REDIRECT_URI")
+	if config.OIDCRedirectURI == "" {
+		panic("Missing OIDC_REDIRECT_URI")
+	}
+
+	config.JwtSecret = os.Getenv("JWT_SECRET")
+	if config.JwtSecret == "" {
+		panic("Missing JWT_SECRET")
+	}
+
+	// optional - with defaults
 
 	envAutoMigrate := os.Getenv("AUTO_MIGRATE")
 	if envAutoMigrate != "" {
-		Configs.AutoMigrate = envAutoMigrate == "true"
+		config.AutoMigrate = envAutoMigrate == "true"
 	} else {
-		Configs.AutoMigrate = true
+		config.AutoMigrate = true
 	}
 
-	envMigrationsDir := os.Getenv("MIGRATIONS_DIR")
-	if envMigrationsDir != "" {
-		Configs.MigrationsDir = envMigrationsDir
-	} else {
-		Configs.MigrationsDir = "migrations"
+	config.MigrationsDir = os.Getenv("MIGRATIONS_DIR")
+	if config.MigrationsDir == "" {
+		config.MigrationsDir = "migrations"
 	}
 
 	envPort := os.Getenv("PORT")
 	if envPort != "" {
-		Configs.ServerAddress = ":" + envPort
+		config.ServerAddress = ":" + envPort
 	} else {
-		Configs.ServerAddress = ":3000"
+		config.ServerAddress = ":3000"
 	}
+
+	return config
+}
+
+type MigrateConfigs struct {
+	MigrationsDir string
+	DataBaseURL   string
+}
+
+func GetMigrateConfigs() MigrateConfigs {
+	config := MigrateConfigs{}
+
+	// mandatory
+
+	config.DataBaseURL = os.Getenv("DATABASE_URL")
+	if config.DataBaseURL == "" {
+		panic("Missing DATABASE_URL")
+	}
+
+	// optional - with defaults
+
+	config.MigrationsDir = os.Getenv("MIGRATIONS_DIR")
+	if config.MigrationsDir == "" {
+		config.MigrationsDir = "migrations"
+	}
+
+	return config
 }

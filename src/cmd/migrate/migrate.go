@@ -2,7 +2,7 @@ package migrate
 
 import (
 	"fmt"
-	config "goth/src/config"
+	"goth/src/config"
 	"strconv"
 
 	"github.com/golang-migrate/migrate/v4"
@@ -14,8 +14,10 @@ import (
 type withMigrateFunc func(m *migrate.Migrate)
 
 func apply(fMigrate withMigrateFunc) {
-	sourceURL := fmt.Sprintf("file://%s", config.Configs.MigrationsDir)
-	databaseURL := fmt.Sprintf("sqlite://%s", config.Configs.DataBaseURL)
+	cfg := config.GetMigrateConfigs()
+
+	sourceURL := fmt.Sprintf("file://%s", cfg.MigrationsDir)
+	databaseURL := fmt.Sprintf("sqlite://%s", cfg.DataBaseURL)
 
 	m, err := migrate.New(sourceURL, databaseURL)
 	checkErr("Failed to get migrate", err)

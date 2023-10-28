@@ -6,3 +6,5 @@ type Task struct {
 	Description string `json:"description"`
 	OwnerId     string `json:"owner_id"`
 }
+
+var EmptyTask = Task{}

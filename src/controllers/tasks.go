@@ -1,25 +1,29 @@
 package controllers
 
 import (
+	"database/sql"
 	"goth/src/models"
 	"goth/src/repositories/database"
+	"goth/src/repositories/oidc"
 
-	"github.com/google/uuid"
+	"github.com/gofiber/fiber/v2"
 )
 
 type TaskController struct {
-	DbRepo database.Database
+	DbRepo   database.Database
+	OIDCRepo oidc.OIDC
 }
 
-func NewTaskController(dbRepo database.Database) *TaskController {
-	return &TaskController{dbRepo}
+func NewTaskController(dbRepo database.Database, oidcRepo oidc.OIDC) *TaskController {
+	return &TaskController{
+		DbRepo:   dbRepo,
+		OIDCRepo: oidcRepo,
+	}
 }
-
-// PROTECTED
 
 func (tc *TaskController) CreateTask(ownerId string) (models.Task, error) {
 	task := models.Task{
-		Id:          uuid.New().String(),
+		Id:          models.GenerateId(),
 		Title:       "New Task",
 		Description: "New Task Description",
 		OwnerId:     ownerId,
@@ -31,13 +35,29 @@ func (tc *TaskController) ListTasks(ownerId string) ([]models.Task, error) {
 	return tc.DbRepo.ListTasksByOwner(ownerId)
 }
 
-// SCOPED
+func (tc *TaskController) RetrieveTask(ownerId, taskId string) (models.Task, error) {
+	task, err := tc.DbRepo.RetrieveTaskById(taskId)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return models.EmptyTask, fiber.ErrNotFound
+		}
 
-func (tc *TaskController) RetrieveTask(taskId string) (models.Task, error) {
-	return tc.DbRepo.RetrieveTaskById(taskId)
+		return models.EmptyTask, err
+	}
+
+	if task.OwnerId != ownerId {
+		return models.EmptyTask, fiber.ErrNotFound
+	}
+
+	return task, nil
 }
 
-func (tc *TaskController) DeleteTask(taskId string) error {
+func (tc *TaskController) DeleteTask(ownerId, taskId string) error {
+	_, err := tc.RetrieveTask(ownerId, taskId)
+	if err != nil {
+		return err
+	}
+
 	return tc.DbRepo.DeleteTask(taskId)
 }
 
@@ -46,8 +66,8 @@ type TaskChange struct {
 	Description string `json:"description"`
 }
 
-func (tc *TaskController) UpdateTask(taskId string, changes TaskChange) error {
-	task, err := tc.RetrieveTask(taskId)
+func (tc *TaskController) UpdateTask(ownerId, taskId string, changes TaskChange) error {
+	task, err := tc.RetrieveTask(ownerId, taskId)
 	if err != nil {
 		return err
 	}

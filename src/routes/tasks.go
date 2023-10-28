@@ -7,18 +7,14 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func initTaskRoutes(app *fiber.App, tc *controllers.TaskController) {
-	app.Get("/", taskList(tc))
-	app.Get("/new", taskNew(tc))
-	app.Get("/edit/:id", taskEdit(tc))
-	app.Post("/edit/:id", taskSave(tc))
-}
-
 func taskList(tc *controllers.TaskController) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		mockOwner := "00000000-0000-4000-0000-000000000000"
-		tasks, err := tc.ListTasks(mockOwner)
+		user, err := getUser(c)
+		if err != nil {
+			return err
+		}
 
+		tasks, err := tc.ListTasks(user.ID)
 		if err != nil {
 			return err
 		}
@@ -29,9 +25,12 @@ func taskList(tc *controllers.TaskController) fiber.Handler {
 
 func taskNew(tc *controllers.TaskController) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		mockOwner := "00000000-0000-4000-0000-000000000000"
-		task, err := tc.CreateTask(mockOwner)
+		user, err := getUser(c)
+		if err != nil {
+			return err
+		}
 
+		task, err := tc.CreateTask(user.ID)
 		if err != nil {
 			return err
 		}
@@ -42,8 +41,13 @@ func taskNew(tc *controllers.TaskController) fiber.Handler {
 
 func taskEdit(tc *controllers.TaskController) fiber.Handler {
 	return func(c *fiber.Ctx) error {
+		user, err := getUser(c)
+		if err != nil {
+			return err
+		}
+
 		taskId := c.Params("id")
-		task, err := tc.RetrieveTask(taskId)
+		task, err := tc.RetrieveTask(user.ID, taskId)
 
 		if err != nil {
 			return err
@@ -55,14 +59,19 @@ func taskEdit(tc *controllers.TaskController) fiber.Handler {
 
 func taskSave(tc *controllers.TaskController) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		var taskId = c.Params("id")
-		var taskChange controllers.TaskChange
-		err := c.BodyParser(&taskChange)
+		user, err := getUser(c)
 		if err != nil {
 			return err
 		}
 
-		if err := tc.UpdateTask(taskId, taskChange); err != nil {
+		var taskId = c.Params("id")
+		var taskChange controllers.TaskChange
+		err = c.BodyParser(&taskChange)
+		if err != nil {
+			return err
+		}
+
+		if err := tc.UpdateTask(user.ID, taskId, taskChange); err != nil {
 			return err
 		}
 

@@ -11,7 +11,9 @@ import (
 )
 
 func Start(cmd *cobra.Command, args []string) {
-	if config.Configs.AutoMigrate {
+	cfg := config.GetServerConfigs()
+
+	if cfg.AutoMigrate {
 		migrate.Up(cmd, args)
 	}
 
@@ -20,9 +22,9 @@ func Start(cmd *cobra.Command, args []string) {
 	})
 
 	app.Use(cors.New())
-	routes.Init(app)
+	routes.Init(app, cfg)
 
-	if err := app.Listen(config.Configs.ServerAddress); err != nil {
+	if err := app.Listen(cfg.ServerAddress); err != nil {
 		panic(err.Error())
 	}
 }
