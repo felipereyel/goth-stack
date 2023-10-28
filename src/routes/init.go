@@ -16,19 +16,14 @@ func healthzHandler(c *fiber.Ctx) error {
 }
 
 func Init(app *fiber.App, cfg config.ServerConfigs) error {
-	jwtRepo := jwt.NewJWTRepo(cfg.JwtSecret)
+	jwtRepo := jwt.NewJWTRepo(cfg)
 
-	dbRepo, err := database.NewDatabaseRepo(cfg.DataBaseURL)
+	dbRepo, err := database.NewDatabaseRepo(cfg)
 	if err != nil {
 		return fmt.Errorf("[Init] failed to get database: %w", err)
 	}
 
-	oidcRepo, err := oidc.NewOIDC(
-		cfg.OIDCIssuer,
-		cfg.OIDCClientID,
-		cfg.OIDCClientSec,
-		cfg.OIDCRedirectURI,
-	)
+	oidcRepo, err := oidc.NewOIDC(cfg)
 	if err != nil {
 		return fmt.Errorf("[Init] failed to get oidc: %w", err)
 	}

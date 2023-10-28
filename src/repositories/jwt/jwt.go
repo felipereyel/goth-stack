@@ -1,6 +1,7 @@
 package jwt
 
 import (
+	"goth/src/config"
 	"time"
 
 	gojwt "github.com/golang-jwt/jwt/v5"
@@ -10,9 +11,9 @@ type jwt struct {
 	bsecret []byte
 }
 
-func NewJWTRepo(secret string) JWT {
+func NewJWTRepo(cfg config.ServerConfigs) JWT {
 	return &jwt{
-		bsecret: []byte(secret),
+		bsecret: []byte(cfg.JwtSecret),
 	}
 }
 

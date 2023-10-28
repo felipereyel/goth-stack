@@ -7,15 +7,18 @@ import (
 )
 
 type ServerConfigs struct {
-	AutoMigrate     bool
-	MigrationsDir   string
-	ServerAddress   string
-	DataBaseURL     string
-	OIDCIssuer      string
-	OIDCClientID    string
-	OIDCClientSec   string
-	OIDCRedirectURI string
-	JwtSecret       string
+	AutoMigrate   bool
+	MigrationsDir string
+	ServerAddress string
+
+	DataBaseURL string
+	JwtSecret   string
+
+	OIDCIssuer            string
+	OIDCClientID          string
+	OIDCClientSec         string
+	OIDCRedirectURI       string
+	OIDCLogoutRedirectURI string
 }
 
 func GetServerConfigs() ServerConfigs {
@@ -26,6 +29,11 @@ func GetServerConfigs() ServerConfigs {
 	config.DataBaseURL = os.Getenv("DATABASE_URL")
 	if config.DataBaseURL == "" {
 		panic("Missing DATABASE_URL")
+	}
+
+	config.JwtSecret = os.Getenv("JWT_SECRET")
+	if config.JwtSecret == "" {
+		panic("Missing JWT_SECRET")
 	}
 
 	config.OIDCIssuer = os.Getenv("OIDC_ISSUER")
@@ -48,9 +56,9 @@ func GetServerConfigs() ServerConfigs {
 		panic("Missing OIDC_REDIRECT_URI")
 	}
 
-	config.JwtSecret = os.Getenv("JWT_SECRET")
-	if config.JwtSecret == "" {
-		panic("Missing JWT_SECRET")
+	config.OIDCLogoutRedirectURI = os.Getenv("OIDC_LOGOUT_REDIRECT_URI")
+	if config.OIDCLogoutRedirectURI == "" {
+		panic("Missing OIDC_LOGOUT_REDIRECT_URI")
 	}
 
 	// optional - with defaults

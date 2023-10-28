@@ -3,6 +3,7 @@ package oidc
 import (
 	"encoding/json"
 	"fmt"
+	"goth/src/config"
 	"goth/src/utils"
 	"net/url"
 	"time"
@@ -22,8 +23,8 @@ type oidc struct {
 	redirectURI  string
 }
 
-func NewOIDC(issuer, clientID, clientSecret, redirectURI string) (OIDC, error) {
-	baseClient := utils.HTTPClient{BaseUrl: issuer}
+func NewOIDC(cfg config.ServerConfigs) (OIDC, error) {
+	baseClient := utils.HTTPClient{BaseUrl: cfg.OIDCIssuer}
 	wellKnownResponse, err := baseClient.Request("GET", "/.well-known/openid-configuration", nil)
 	if err != nil {
 		return nil, err
@@ -35,7 +36,12 @@ func NewOIDC(issuer, clientID, clientSecret, redirectURI string) (OIDC, error) {
 		return nil, err
 	}
 
-	return &oidc{wellKnown, clientID, clientSecret, redirectURI}, nil
+	return &oidc{
+		wellKnown:    wellKnown,
+		clientID:     cfg.OIDCClientID,
+		clientSecret: cfg.OIDCClientSec,
+		redirectURI:  cfg.OIDCRedirectURI,
+	}, nil
 }
 
 func (o *oidc) GetAuthorizeURL(scope, state string) string {

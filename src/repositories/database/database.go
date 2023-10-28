@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"goth/src/config"
 	"goth/src/models"
 	"strings"
 
@@ -12,8 +13,8 @@ type database struct {
 	conn *sql.DB
 }
 
-func NewDatabaseRepo(dbUrl string) (Database, error) {
-	conn, err := sql.Open("sqlite", dbUrl)
+func NewDatabaseRepo(cfg config.ServerConfigs) (Database, error) {
+	conn, err := sql.Open("sqlite", cfg.DataBaseURL)
 	if err != nil {
 		return nil, err
 	}
