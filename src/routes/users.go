@@ -10,17 +10,15 @@ import (
 
 const cookieName = "goth:jwt"
 
-func setUser(c *fiber.Ctx, user models.User) {
-	c.Locals("user", user)
-}
+func withUser(handler func(user models.User, c *fiber.Ctx) error) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		user, ok := c.Locals("user").(models.User)
+		if !ok {
+			return fiber.ErrUnauthorized
+		}
 
-func getUser(c *fiber.Ctx) (models.User, error) {
-	user, ok := c.Locals("user").(models.User)
-	if !ok {
-		return models.EmptyUser, fiber.ErrUnauthorized
+		return handler(user, c)
 	}
-
-	return user, nil
 }
 
 func redirectToAuth(uc *controllers.UserController, c *fiber.Ctx, saveState bool) error {
@@ -79,7 +77,7 @@ func withAuth(uc *controllers.UserController) fiber.Handler {
 			return redirectToAuth(uc, c, true)
 		}
 
-		setUser(c, user)
+		c.Locals("user", user)
 		return c.Next()
 	}
 }

@@ -8,17 +8,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func withUser(handler func(user models.User, c *fiber.Ctx) error) fiber.Handler {
-	return func(c *fiber.Ctx) error {
-		user, err := getUser(c)
-		if err != nil {
-			return err
-		}
-
-		return handler(user, c)
-	}
-}
-
 func taskList(tc *controllers.TaskController) fiber.Handler {
 	return withUser(func(user models.User, c *fiber.Ctx) error {
 		tasks, err := tc.ListTasks(user.ID)
