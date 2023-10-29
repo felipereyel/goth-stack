@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"goth/src/cmd/fiddle"
 	"goth/src/cmd/migrate"
 	"goth/src/cmd/server"
 
@@ -32,15 +31,8 @@ var migrateDownCmd = &cobra.Command{
 	Args:  cobra.ExactArgs(1),
 }
 
-var fiddleCmd = &cobra.Command{
-	Use:   "fiddle",
-	Short: "Fiddle with the application",
-	Run:   fiddle.Run,
-}
-
 func init() {
 	rootCmd.AddCommand(serveCmd)
-	rootCmd.AddCommand(fiddleCmd)
 	rootCmd.AddCommand(migrateUpCmd)
 	rootCmd.AddCommand(migrateDownCmd)
 }
