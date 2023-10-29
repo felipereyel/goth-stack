@@ -9,7 +9,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-const cookieName = "gothjwt"
+const cookieName = "goth:jwt"
 
 func withAuth[C controllers.Controllers](uController *controllers.UserController, controller *C, handler func(*C, *fiber.Ctx, models.User) error) fiber.Handler {
 	return func(ctx *fiber.Ctx) error {
