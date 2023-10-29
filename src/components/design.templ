@@ -54,7 +54,7 @@ templ ErrorPage() {
     }
 }
 
-templ contextualPage(title string, breadcrumb, description string) {
+templ authenticatedPage(title string, breadcrumb, description string) {
     @rawPage(title) {
         <div class="px-4 sm:px-8 max-w-5xl m-auto">
             <div class="flex flex-col">
@@ -73,10 +73,24 @@ templ contextualPage(title string, breadcrumb, description string) {
     }
 }
 
+templ PostLogoutPage() {
+    @rawPage("You are logged out") {
+        <div class="px-4 sm:px-8 max-w-5xl m-auto">
+            <div class="flex flex-col">
+                <div class="flex flex-row justify-between items-center">
+                    <a href="/" class="text-2xl">Home</a>
+                    <a href="/auth/login" class="bg-slate-800 border border-slate-600 rounded px-2">Login</a>
+                </div>
+                <p class="mt-2 text-xs mb-4 text-gray-500">You need to login to proceed</p>
+            </div>
+        </div>
+    }
+}
+
 // Tasks Views
 
 templ TaskListPage(tasks []models.Task) {
-    @contextualPage("Tasks List", "Tasks", "Open Tasks To Do") {
+    @authenticatedPage("Tasks List", "Tasks", "Open Tasks To Do") {
         <div>
             <ul id="wrapper" class="border border-slate-600 rounded overflow-hidden shadow-md">
                 if len(tasks) > 0 {
@@ -99,7 +113,7 @@ templ TaskListPage(tasks []models.Task) {
 }
 
 templ TaskEditPage(task models.Task) {
-    @contextualPage("Task Editor", fmt.Sprintf("Tasks > %s", task.Title), "Edit this task") {
+    @authenticatedPage("Task Editor", fmt.Sprintf("Tasks > %s", task.Title), "Edit this task") {
         <div>
             <div class="flex flex-col">
                 <label for="title" class="text-xs mb-1">Title</label>

@@ -2,13 +2,14 @@ package routes
 
 import (
 	"encoding/base64"
+	"goth/src/components"
 	"goth/src/controllers"
 	"goth/src/models"
 
 	"github.com/gofiber/fiber/v2"
 )
 
-const cookieName = "goth:jwt"
+const cookieName = "gothjwt"
 
 func withAuth[C controllers.Controllers](uController *controllers.UserController, controller *C, handler func(*C, *fiber.Ctx, models.User) error) fiber.Handler {
 	return func(ctx *fiber.Ctx) error {
@@ -79,6 +80,7 @@ func logoutHandler(uc *controllers.UserController) fiber.Handler {
 
 func postLogoutHandler(uc *controllers.UserController) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		return c.Redirect("/")
+		c.ClearCookie(cookieName)
+		return sendPage(c, components.PostLogoutPage())
 	}
 }
