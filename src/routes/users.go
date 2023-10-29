@@ -5,6 +5,7 @@ import (
 	"goth/src/components"
 	"goth/src/controllers"
 	"goth/src/models"
+	"goth/src/utils"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -18,7 +19,7 @@ func withAuth[C controllers.Controllers](uController *controllers.UserController
 			return redirectToAuthLogin(uController, ctx, true)
 		}
 
-		user, err := uController.VerifyCookie(jwt)
+		user, err := uController.VerifyJWTCookie(jwt)
 		if err != nil {
 			return redirectToAuthLogin(uController, ctx, true)
 		}
@@ -33,7 +34,7 @@ func redirectToAuthLogin(uc *controllers.UserController, c *fiber.Ctx, saveState
 		b64State = base64.StdEncoding.EncodeToString([]byte(c.Path()))
 	}
 
-	c.ClearCookie(cookieName)
+	utils.ClearCookie(c, cookieName)
 	return c.Redirect(uc.GetAuthorizeURL(b64State))
 }
 
@@ -50,12 +51,12 @@ func postLoginHandler(uc *controllers.UserController) fiber.Handler {
 			return c.Redirect("/")
 		}
 
-		cookie, err := uc.GetCookie(cookieName, code)
+		cookieValue, exp, err := uc.GetJWTCookie(code)
 		if err != nil {
 			return c.Redirect("/")
 		}
 
-		c.Cookie(cookie)
+		utils.SetCookie(c, cookieName, cookieValue, exp)
 
 		state := c.Query("state")
 		if state != "" {
@@ -73,14 +74,14 @@ func postLoginHandler(uc *controllers.UserController) fiber.Handler {
 
 func logoutHandler(uc *controllers.UserController) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		c.ClearCookie(cookieName)
+		utils.ClearCookie(c, cookieName)
 		return c.Redirect(uc.GetLogoutURL())
 	}
 }
 
 func postLogoutHandler(uc *controllers.UserController) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		c.ClearCookie(cookieName)
+		utils.ClearCookie(c, cookieName)
 		return sendPage(c, components.PostLogoutPage())
 	}
 }

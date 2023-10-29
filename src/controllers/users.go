@@ -5,8 +5,7 @@ import (
 	"goth/src/repositories/database"
 	"goth/src/repositories/jwt"
 	"goth/src/repositories/oidc"
-
-	"github.com/gofiber/fiber/v2"
+	"time"
 )
 
 type UserController struct {
@@ -27,7 +26,7 @@ func (uc *UserController) GetLogoutURL() string {
 	return uc.oidcRepo.GetLogoutURL()
 }
 
-func (uc *UserController) VerifyCookie(token string) (models.User, error) {
+func (uc *UserController) VerifyJWTCookie(token string) (models.User, error) {
 	id, err := uc.jwtRepo.ParseJWT(token)
 	if err != nil {
 		return models.EmptyUser, err
@@ -36,25 +35,21 @@ func (uc *UserController) VerifyCookie(token string) (models.User, error) {
 	return uc.dbRepo.RetrieveUserById(id)
 }
 
-func (uc *UserController) GetCookie(cookieName, code string) (*fiber.Cookie, error) {
+func (uc *UserController) GetJWTCookie(code string) (string, time.Time, error) {
 	userInfo, expiration, err := uc.oidcRepo.GetUser(code)
 	if err != nil {
-		return nil, err
+		return "", time.Time{}, err
 	}
 
 	user, err := uc.dbRepo.UpsertUser(userInfo.Email)
 	if err != nil {
-		return nil, err
+		return "", time.Time{}, err
 	}
 
 	token, err := uc.jwtRepo.GenerateJWT(user.ID, expiration)
 	if err != nil {
-		return nil, err
+		return "", time.Time{}, err
 	}
 
-	return &fiber.Cookie{
-		Name:    cookieName,
-		Value:   token,
-		Expires: expiration,
-	}, nil
+	return token, expiration, nil
 }
