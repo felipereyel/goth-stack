@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"goth/src/config"
 	"goth/src/models"
-	"strings"
 
 	_ "modernc.org/sqlite"
 )
@@ -94,7 +93,7 @@ func (db *database) UpsertUser(email string) (models.User, error) {
 	}
 
 	user.ID = models.GenerateId()
-	user.Name = strings.Split(email, "@")[0]
+	user.Name = models.GenerateNameFromEmail(email)
 
 	query = `INSERT INTO users (id, email, name) VALUES (?, ?, ?) RETURNING id, email, name`
 	row = db.conn.QueryRow(query, user.ID, user.Email, user.Name)
