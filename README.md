@@ -44,4 +44,5 @@ Before running be sure to add all required environment variables (see [env examp
 - Embeded Migrations
 
 ### Next
+- [ ] Drop oidc for basic
 - [ ] SQL Autogeneration with [sqlc](https://github.com/sqlc-dev/sqlc)
