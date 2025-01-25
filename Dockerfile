@@ -10,7 +10,7 @@ COPY Makefile go.mod go.sum ./
 RUN go mod download
 
 COPY main.go  .
-COPY src/ src/
+COPY internal/ internal/
 
 RUN make all
 RUN go build -o ./goapp

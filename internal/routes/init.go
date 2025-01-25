@@ -2,11 +2,11 @@ package routes
 
 import (
 	"fmt"
-	"goth/src/config"
-	"goth/src/controllers"
-	"goth/src/repositories/database"
-	"goth/src/repositories/jwt"
-	"goth/src/repositories/oidc"
+	"goth/internal/config"
+	"goth/internal/controllers"
+	"goth/internal/repositories/database"
+	"goth/internal/repositories/jwt"
+	"goth/internal/repositories/oidc"
 
 	"github.com/gofiber/fiber/v2"
 )

@@ -2,7 +2,7 @@ package database
 
 import (
 	"database/sql"
-	"goth/src/models"
+	"goth/internal/models"
 
 	_ "modernc.org/sqlite"
 )

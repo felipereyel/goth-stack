@@ -1,9 +1,9 @@
 package server
 
 import (
-	"goth/src/cmd/migrate"
-	"goth/src/config"
-	"goth/src/routes"
+	"goth/internal/cmd/migrate"
+	"goth/internal/config"
+	"goth/internal/routes"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"

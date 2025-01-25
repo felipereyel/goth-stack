@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"goth/src/embeded"
+	"goth/internal/embeded"
 	"net/http"
 
 	"github.com/gofiber/fiber/v2/middleware/filesystem"

@@ -3,8 +3,8 @@ package oidc
 import (
 	"encoding/json"
 	"fmt"
-	"goth/src/config"
-	"goth/src/utils"
+	"goth/internal/config"
+	"goth/internal/utils"
 	"net/url"
 	"time"
 )

@@ -1,10 +1,10 @@
 package controllers
 
 import (
-	"goth/src/models"
-	"goth/src/repositories/database"
-	"goth/src/repositories/jwt"
-	"goth/src/repositories/oidc"
+	"goth/internal/models"
+	"goth/internal/repositories/database"
+	"goth/internal/repositories/jwt"
+	"goth/internal/repositories/oidc"
 	"time"
 )
 

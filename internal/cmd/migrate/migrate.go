@@ -2,8 +2,8 @@ package migrate
 
 import (
 	"fmt"
-	"goth/src/config"
-	"goth/src/embeded"
+	"goth/internal/config"
+	"goth/internal/embeded"
 	"strconv"
 
 	"github.com/golang-migrate/migrate/v4"

@@ -30,7 +30,10 @@ db.sqlite
 tmp
 
 # templ
-src/components/*.go
+internal/components/*.go
 
 # js
 *.js
+
+# main builds
+main

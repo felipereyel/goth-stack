@@ -1,7 +1,7 @@
 package database
 
 import (
-	"goth/src/models"
+	"goth/internal/models"
 
 	_ "modernc.org/sqlite"
 )

@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"goth/src/cmd/migrate"
-	"goth/src/cmd/server"
+	"goth/internal/cmd/migrate"
+	"goth/internal/cmd/server"
 
 	"github.com/spf13/cobra"
 )

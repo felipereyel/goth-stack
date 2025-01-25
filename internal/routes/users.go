@@ -2,10 +2,10 @@ package routes
 
 import (
 	"encoding/base64"
-	"goth/src/components"
-	"goth/src/controllers"
-	"goth/src/models"
-	"goth/src/utils"
+	"goth/internal/components"
+	"goth/internal/controllers"
+	"goth/internal/models"
+	"goth/internal/utils"
 
 	"github.com/gofiber/fiber/v2"
 )

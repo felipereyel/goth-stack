@@ -30,7 +30,7 @@ db.sqlite3
 tmp
 
 # templ
-src/components/*.go
+internal/components/*.go
 
 # js
-src/components/embeded/statics/*.js
+internal/components/embeded/statics/*.js
