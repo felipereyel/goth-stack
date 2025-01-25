@@ -3,11 +3,13 @@ package migrate
 import (
 	"fmt"
 	"goth/src/config"
+	"goth/src/embeded"
 	"strconv"
 
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/sqlite"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
+	"github.com/golang-migrate/migrate/v4/source/iofs"
 	"github.com/spf13/cobra"
 )
 
@@ -16,10 +18,14 @@ type withMigrateFunc func(m *migrate.Migrate)
 func apply(fMigrate withMigrateFunc) {
 	cfg := config.GetMigrateConfigs()
 
-	sourceURL := fmt.Sprintf("file://%s", cfg.MigrationsDir)
+	d, err := iofs.New(embeded.Migrations, "migrations")
+	if err != nil {
+		checkErr("Failed to get embeded migrations", err)
+	}
+
 	databaseURL := fmt.Sprintf("sqlite://%s", cfg.DataBaseURL)
 
-	m, err := migrate.New(sourceURL, databaseURL)
+	m, err := migrate.NewWithSourceInstance("iofs", d, databaseURL)
 	checkErr("Failed to get migrate", err)
 	defer m.Close()
 

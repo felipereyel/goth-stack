@@ -4,5 +4,5 @@ import "embed"
 
 // Embed a directory
 //
-//go:embed statics/*
-var Statics embed.FS
+//go:embed migrations/*.sql
+var Migrations embed.FS

@@ -39,9 +39,9 @@ Before running be sure to add all required environment variables (see [env examp
 - HTMx
 - Tailwind
 - Templ
-- Migrations
 - OIdC auth
 - JWT cookie auth
+- Embeded Migrations
 
 ### Next
 - [ ] SQL Autogeneration with [sqlc](https://github.com/sqlc-dev/sqlc)

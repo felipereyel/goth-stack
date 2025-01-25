@@ -19,8 +19,5 @@ RUN go build -o ./goapp
 FROM alpine:latest as release
 COPY --from=goapp /app/goapp /goapp
 
-COPY migrations/ /migrations
-ENV MIGRATIONS_DIR=/migrations
-
 WORKDIR /app
 CMD ["/goapp", "serve"]

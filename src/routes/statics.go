@@ -8,7 +8,7 @@ import (
 )
 
 var staticsHandler = filesystem.New(filesystem.Config{
-	Root:       http.FS(embeded.EmbedDirStatic),
+	Root:       http.FS(embeded.Statics),
 	PathPrefix: "statics",
 	MaxAge:     60 * 60,
 })

@@ -8,7 +8,6 @@ import (
 
 type ServerConfigs struct {
 	AutoMigrate   bool
-	MigrationsDir string
 	ServerAddress string
 
 	DataBaseURL string
@@ -70,11 +69,6 @@ func GetServerConfigs() ServerConfigs {
 		config.AutoMigrate = true
 	}
 
-	config.MigrationsDir = os.Getenv("MIGRATIONS_DIR")
-	if config.MigrationsDir == "" {
-		config.MigrationsDir = "migrations"
-	}
-
 	envPort := os.Getenv("PORT")
 	if envPort != "" {
 		config.ServerAddress = ":" + envPort
@@ -86,8 +80,7 @@ func GetServerConfigs() ServerConfigs {
 }
 
 type MigrateConfigs struct {
-	MigrationsDir string
-	DataBaseURL   string
+	DataBaseURL string
 }
 
 func GetMigrateConfigs() MigrateConfigs {
@@ -98,13 +91,6 @@ func GetMigrateConfigs() MigrateConfigs {
 	config.DataBaseURL = os.Getenv("DATABASE_URL")
 	if config.DataBaseURL == "" {
 		panic("Missing DATABASE_URL")
-	}
-
-	// optional - with defaults
-
-	config.MigrationsDir = os.Getenv("MIGRATIONS_DIR")
-	if config.MigrationsDir == "" {
-		config.MigrationsDir = "migrations"
 	}
 
 	return config
