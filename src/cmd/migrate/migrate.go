@@ -19,9 +19,7 @@ func apply(fMigrate withMigrateFunc) {
 	cfg := config.GetMigrateConfigs()
 
 	d, err := iofs.New(embeded.Migrations, "migrations")
-	if err != nil {
-		checkErr("Failed to get embeded migrations", err)
-	}
+	checkErr("Failed to get embeded migrations", err)
 
 	databaseURL := fmt.Sprintf("sqlite://%s", cfg.DataBaseURL)
 
