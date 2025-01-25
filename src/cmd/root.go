@@ -15,7 +15,7 @@ var rootCmd = &cobra.Command{
 var serveCmd = &cobra.Command{
 	Use:   "serve",
 	Short: "Serve the application",
-	Run:   server.Start,
+	Run:   server.Serve,
 }
 
 var migrateUpCmd = &cobra.Command{

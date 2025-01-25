@@ -21,9 +21,13 @@
     go install github.com/cosmtrek/air@latest
 ```
 
+### Tailwind and Htmx
+This project download the statics to embed in the bundle
+
 ## How to run
 Before running be sure to add all required environment variables (see [env example](.env.example)) 
 
+- make: `make statics` to download statics
 - serve: `go run main.go serve` or `air serve`
 - migrate up: `go run main.go migrate:up` or `air migrate:up`
 - migrate down: `go run main.go migrate:down N` or `air migrate:down N` where N is the number of migrations down

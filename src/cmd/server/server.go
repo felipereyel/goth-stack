@@ -10,7 +10,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func Start(cmd *cobra.Command, args []string) {
+func Serve(cmd *cobra.Command, args []string) {
 	cfg := config.GetServerConfigs()
 
 	if cfg.AutoMigrate {
@@ -22,7 +22,10 @@ func Start(cmd *cobra.Command, args []string) {
 	})
 
 	app.Use(cors.New())
-	routes.Init(app, cfg)
+
+	if err := routes.Init(app, cfg); err != nil {
+		panic(err.Error())
+	}
 
 	if err := app.Listen(cfg.ServerAddress); err != nil {
 		panic(err.Error())

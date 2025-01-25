@@ -42,6 +42,7 @@ func Init(app *fiber.App, cfg config.ServerConfigs) error {
 	app.Get("/edit/:id", withAuth(uc, tc, taskEdit))
 	app.Post("/edit/:id", withAuth(uc, tc, taskSave))
 
+	app.Use("/statics", staticsHandler)
 	app.Use("/healthz", healthzHandler)
 	app.Use(notFoundHandler)
 

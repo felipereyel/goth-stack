@@ -31,3 +31,6 @@ tmp
 
 # templ
 src/components/*.go
+
+# js
+*.js
