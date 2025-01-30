@@ -4,20 +4,17 @@ import (
 	"database/sql"
 	"goth/internal/models"
 	"goth/internal/repositories/database"
-	"goth/internal/repositories/oidc"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 type TaskController struct {
-	DbRepo   database.Database
-	OIDCRepo oidc.OIDC
+	DbRepo database.Database
 }
 
-func NewTaskController(dbRepo database.Database, oidcRepo oidc.OIDC) *TaskController {
+func NewTaskController(dbRepo database.Database) *TaskController {
 	return &TaskController{
-		DbRepo:   dbRepo,
-		OIDCRepo: oidcRepo,
+		DbRepo: dbRepo,
 	}
 }
 

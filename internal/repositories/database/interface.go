@@ -15,6 +15,7 @@ type Database interface {
 	DeleteTask(taskId string) error
 	ListTasksByOwner(ownerId string) ([]models.Task, error)
 
-	UpsertUser(email string) (models.User, error)
-	RetrieveUserById(userId string) (models.User, error)
+	InsertUser(user models.User) error
+	RetrieveUserById(id string) (models.User, error)
+	RetrieveUserByName(username string) (models.User, error)
 }

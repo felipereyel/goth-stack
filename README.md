@@ -39,10 +39,10 @@ Before running be sure to add all required environment variables (see [env examp
 - HTMx
 - Tailwind
 - Templ
-- OIdC auth
+- Custom auth
 - JWT cookie auth
 - Embeded Migrations
 
 ### Next
-- [ ] Drop oidc for basic
+- [ ] Access + refresh tokens
 - [ ] SQL Autogeneration with [sqlc](https://github.com/sqlc-dev/sqlc)

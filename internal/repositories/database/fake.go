@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"fmt"
 	"goth/internal/models"
 
 	_ "modernc.org/sqlite"
@@ -59,29 +60,31 @@ func (db *fakeDatabase) UpdateTask(task models.Task) error {
 	return nil
 }
 
-func (db *fakeDatabase) UpsertUser(email string) (models.User, error) {
-	for _, u := range db.users {
-		if u.Email == email {
-			return u, nil
-		}
-	}
-
-	user := models.User{
-		Email: email,
-		ID:    models.GenerateId(),
-		Name:  models.GenerateNameFromEmail(email),
+func (db *fakeDatabase) InsertUser(user models.User) error {
+	_, ok := db.users[user.ID]
+	if ok {
+		return fmt.Errorf("non unique email")
 	}
 
 	db.users[user.ID] = user
-
-	return user, nil
+	return nil
 }
 
-func (db *fakeDatabase) RetrieveUserById(userId string) (models.User, error) {
-	user, ok := db.users[userId]
+func (db *fakeDatabase) RetrieveUserById(id string) (models.User, error) {
+	user, ok := db.users[id]
 	if !ok {
 		return models.EmptyUser, sql.ErrNoRows
 	}
 
 	return user, nil
+}
+
+func (db *fakeDatabase) RetrieveUserByName(username string) (models.User, error) {
+	for _, u := range db.users {
+		if u.Username == username {
+			return u, nil
+		}
+	}
+
+	return models.EmptyUser, sql.ErrNoRows
 }

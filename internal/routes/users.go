@@ -1,7 +1,6 @@
 package routes
 
 import (
-	"encoding/base64"
 	"goth/internal/components"
 	"goth/internal/controllers"
 	"goth/internal/models"
@@ -16,72 +15,67 @@ func withAuth[C controllers.Controllers](uController *controllers.UserController
 	return func(ctx *fiber.Ctx) error {
 		jwt := ctx.Cookies(cookieName)
 		if jwt == "" {
-			return redirectToAuthLogin(uController, ctx, true)
+			return ctx.Redirect("/auth/login")
 		}
 
 		user, err := uController.VerifyJWTCookie(jwt)
 		if err != nil {
-			return redirectToAuthLogin(uController, ctx, true)
+			return ctx.Redirect("/auth/login")
 		}
 
 		return handler(controller, ctx, user)
 	}
 }
 
-func redirectToAuthLogin(uc *controllers.UserController, c *fiber.Ctx, saveState bool) error {
-	var b64State string
-	if saveState {
-		b64State = base64.StdEncoding.EncodeToString([]byte(c.Path()))
-	}
-
+func getLogoutHandler(c *fiber.Ctx) error {
 	utils.ClearCookie(c, cookieName)
-	return c.Redirect(uc.GetAuthorizeURL(b64State))
+	return sendPage(c, components.PostLogoutPage())
 }
 
-func loginHandler(uc *controllers.UserController) fiber.Handler {
-	return func(c *fiber.Ctx) error {
-		return redirectToAuthLogin(uc, c, false)
-	}
+func getRegisterHandler(c *fiber.Ctx) error {
+	utils.ClearCookie(c, cookieName)
+	return sendPage(c, components.RegisterPage())
+}
+
+func getLoginHandler(c *fiber.Ctx) error {
+	utils.ClearCookie(c, cookieName)
+	return sendPage(c, components.LoginPage())
 }
 
 func postLoginHandler(uc *controllers.UserController) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		code := c.Query("code")
-		if code == "" {
-			return c.Redirect("/")
-		}
-
-		cookieValue, exp, err := uc.GetJWTCookie(code)
+		var req controllers.UserRequest
+		err := c.BodyParser(&req)
 		if err != nil {
-			return c.Redirect("/")
+			return err
 		}
 
-		utils.SetCookie(c, cookieName, cookieValue, exp)
-
-		state := c.Query("state")
-		if state != "" {
-			locationBytes, err := base64.StdEncoding.DecodeString(state)
-			if err != nil {
-				return c.Redirect("/")
-			}
-
-			return c.Redirect(string(locationBytes))
+		cookie, err := uc.Login(req, cookieName)
+		if err != nil {
+			return err
 		}
 
-		return c.Redirect("/")
+		c.Cookie(cookie)
+		c.Set("HX-Redirect", "/")
+		return c.SendStatus(fiber.StatusOK)
 	}
 }
 
-func logoutHandler(uc *controllers.UserController) fiber.Handler {
+func postRegisterHandler(uc *controllers.UserController) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		utils.ClearCookie(c, cookieName)
-		return c.Redirect(uc.GetLogoutURL())
-	}
-}
+		var req controllers.UserRequest
+		err := c.BodyParser(&req)
+		if err != nil {
+			return err
+		}
 
-func postLogoutHandler(uc *controllers.UserController) fiber.Handler {
-	return func(c *fiber.Ctx) error {
-		utils.ClearCookie(c, cookieName)
-		return sendPage(c, components.PostLogoutPage())
+		cookie, err := uc.Register(req, cookieName)
+		if err != nil {
+			return err
+		}
+
+		c.Cookie(cookie)
+		c.Set("HX-Redirect", "/")
+		return c.SendStatus(fiber.StatusOK)
 	}
 }

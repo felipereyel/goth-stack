@@ -77,28 +77,18 @@ func (db *database) UpdateTask(task models.Task) error {
 	return err
 }
 
-func (db *database) UpsertUser(email string) (models.User, error) {
-	user := models.User{Email: email}
+func (db *database) InsertUser(user models.User) error {
+	query := `INSERT INTO users (id, username, pswd_hash) VALUES (?, ?, ?)`
+	_, err := db.conn.Exec(query, user.ID, user.Username, user.PswdHash)
+	return err
+}
 
-	query := `SELECT id, email, name FROM users WHERE email = ?`
-	row := db.conn.QueryRow(query, email)
+func (db *database) RetrieveUserByName(username string) (models.User, error) {
+	query := `SELECT id, username, pswd_hash FROM users WHERE username = ?`
+	row := db.conn.QueryRow(query, username)
 
-	err := row.Scan(&user.ID, &user.Email, &user.Name)
-	if err == nil {
-		return user, nil
-	}
-
-	if err != sql.ErrNoRows {
-		return models.EmptyUser, err
-	}
-
-	user.ID = models.GenerateId()
-	user.Name = models.GenerateNameFromEmail(email)
-
-	query = `INSERT INTO users (id, email, name) VALUES (?, ?, ?) RETURNING id, email, name`
-	row = db.conn.QueryRow(query, user.ID, user.Email, user.Name)
-
-	err = row.Scan(&user.ID, &user.Email, &user.Name)
+	var user models.User
+	err := row.Scan(&user.ID, &user.Username, &user.PswdHash)
 	if err != nil {
 		return models.EmptyUser, err
 	}
@@ -106,12 +96,12 @@ func (db *database) UpsertUser(email string) (models.User, error) {
 	return user, nil
 }
 
-func (db *database) RetrieveUserById(userId string) (models.User, error) {
-	query := `SELECT id, email, name FROM users WHERE id = ?`
-	row := db.conn.QueryRow(query, userId)
+func (db *database) RetrieveUserById(id string) (models.User, error) {
+	query := `SELECT id, username, pswd_hash FROM users WHERE id = ?`
+	row := db.conn.QueryRow(query, id)
 
 	var user models.User
-	err := row.Scan(&user.ID, &user.Email, &user.Name)
+	err := row.Scan(&user.ID, &user.Username, &user.PswdHash)
 	if err != nil {
 		return models.EmptyUser, err
 	}

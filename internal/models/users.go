@@ -3,9 +3,9 @@ package models
 import "strings"
 
 type User struct {
-	ID    string `json:"id"`
-	Name  string `json:"name"`
-	Email string `json:"email"`
+	ID       string `json:"id"`
+	Username string `json:"username"`
+	PswdHash string `json:"pswd_hash"`
 }
 
 var EmptyUser = User{}
