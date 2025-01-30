@@ -1,10 +1,11 @@
-# goth stack
+# goth oidc
 
 ## Components
 - Go + Fiber
 - Tailwind
 - HTMX
 - SQLite
+- Oidc auth
 
 ## Extenal dependencies
 
