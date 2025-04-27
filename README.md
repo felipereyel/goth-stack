@@ -28,20 +28,13 @@ Before running be sure to add all required environment variables (see [env examp
 
 - make: `make statics` to download statics
 - serve: `go run main.go serve` or `air serve`
-- migrate up: `go run main.go migrate:up` or `air migrate:up`
-- migrate down: `go run main.go migrate:down N` or `air migrate:down N` where N is the number of migrations down
+- migrate collections: `go run main.go migrate collections` or `air migrate collections`
 
 ## Roadmap
 
 ### Done
 - Go
 - HTMx
-- Tailwind
 - Templ
-- Custom auth
-- JWT cookie auth
-- Embeded Migrations
-
-### Next
-- [ ] Access + refresh tokens
-- [ ] SQL Autogeneration with [sqlc](https://github.com/sqlc-dev/sqlc)
+- Tailwind
+- Pocketbase

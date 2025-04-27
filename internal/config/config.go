@@ -7,53 +7,15 @@ import (
 )
 
 type ServerConfigs struct {
-	AutoMigrate   bool
-	ServerAddress string
-
-	DataBaseURL string
+	IsProd bool
 }
 
 func GetServerConfigs() ServerConfigs {
 	config := ServerConfigs{}
 
-	// mandatory
-
-	config.DataBaseURL = os.Getenv("DATABASE_URL")
-	if config.DataBaseURL == "" {
-		panic("Missing DATABASE_URL")
-	}
-
-	// optional - with defaults
-
-	envAutoMigrate := os.Getenv("AUTO_MIGRATE")
-	if envAutoMigrate != "" {
-		config.AutoMigrate = envAutoMigrate == "true"
-	} else {
-		config.AutoMigrate = true
-	}
-
-	envPort := os.Getenv("PORT")
-	if envPort != "" {
-		config.ServerAddress = ":" + envPort
-	} else {
-		config.ServerAddress = ":3000"
-	}
-
-	return config
-}
-
-type MigrateConfigs struct {
-	DataBaseURL string
-}
-
-func GetMigrateConfigs() MigrateConfigs {
-	config := MigrateConfigs{}
-
-	// mandatory
-
-	config.DataBaseURL = os.Getenv("DATABASE_URL")
-	if config.DataBaseURL == "" {
-		panic("Missing DATABASE_URL")
+	config.IsProd = true
+	if os.Getenv("ENV") == "local" {
+		config.IsProd = false
 	}
 
 	return config
