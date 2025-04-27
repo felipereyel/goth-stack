@@ -1,11 +1,11 @@
 module goth
 
-go 1.23
+go 1.23.0
 
-toolchain go1.23.5
+toolchain go1.24.1
 
 require (
-	github.com/a-h/templ v0.3.819
+	github.com/a-h/templ v0.3.857
 	github.com/gofiber/fiber/v2 v2.49.0
 	github.com/golang-jwt/jwt/v5 v5.0.0
 	github.com/golang-migrate/migrate/v4 v4.16.2
@@ -39,7 +39,7 @@ require (
 	go.uber.org/atomic v1.10.0 // indirect
 	golang.org/x/mod v0.20.0 // indirect
 	golang.org/x/sync v0.10.0 // indirect
-	golang.org/x/sys v0.29.0 // indirect
+	golang.org/x/sys v0.31.0 // indirect
 	golang.org/x/tools v0.24.0 // indirect
 	lukechampine.com/uint128 v1.2.0 // indirect
 	modernc.org/cc/v3 v3.40.0 // indirect
