@@ -1,11 +1,9 @@
 # goth oidc
 
 ## Components
-- Go + Fiber
+- Go + Pocketbase
 - Tailwind
 - HTMX
-- SQLite
-- Oidc auth
 
 ## Extenal dependencies
 
