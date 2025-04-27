@@ -11,7 +11,6 @@ type ServerConfigs struct {
 	ServerAddress string
 
 	DataBaseURL string
-	JwtSecret   string
 }
 
 func GetServerConfigs() ServerConfigs {
@@ -22,11 +21,6 @@ func GetServerConfigs() ServerConfigs {
 	config.DataBaseURL = os.Getenv("DATABASE_URL")
 	if config.DataBaseURL == "" {
 		panic("Missing DATABASE_URL")
-	}
-
-	config.JwtSecret = os.Getenv("JWT_SECRET")
-	if config.JwtSecret == "" {
-		panic("Missing JWT_SECRET")
 	}
 
 	// optional - with defaults

@@ -26,14 +26,14 @@ func (db *database) Close() error {
 }
 
 func (db *database) CreateTask(task models.Task) error {
-	query := `INSERT INTO tasks (id, title, description, owner_id) VALUES (?, ?, ?, ?)`
-	_, err := db.conn.Exec(query, task.Id, task.Title, task.Description, task.OwnerId)
+	query := `INSERT INTO tasks (id, title, description) VALUES (?, ?, ?)`
+	_, err := db.conn.Exec(query, task.Id, task.Title, task.Description)
 	return err
 }
 
-func (db *database) ListTasksByOwner(ownerId string) ([]models.Task, error) {
-	query := `SELECT id, title, owner_id, description FROM tasks WHERE owner_id = ?`
-	rows, err := db.conn.Query(query, ownerId)
+func (db *database) ListTasks() ([]models.Task, error) {
+	query := `SELECT id, title, description FROM tasks`
+	rows, err := db.conn.Query(query)
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +41,7 @@ func (db *database) ListTasksByOwner(ownerId string) ([]models.Task, error) {
 	var tasks []models.Task
 	for rows.Next() {
 		var task models.Task
-		err := rows.Scan(&task.Id, &task.Title, &task.OwnerId, &task.Description)
+		err := rows.Scan(&task.Id, &task.Title, &task.Description)
 		if err != nil {
 			return nil, err
 		}
@@ -53,11 +53,11 @@ func (db *database) ListTasksByOwner(ownerId string) ([]models.Task, error) {
 }
 
 func (db *database) RetrieveTaskById(taskId string) (models.Task, error) {
-	query := `SELECT id, title, owner_id, description FROM tasks WHERE id = ?`
+	query := `SELECT id, title, description FROM tasks WHERE id = ?`
 	row := db.conn.QueryRow(query, taskId)
 
 	var task models.Task
-	err := row.Scan(&task.Id, &task.Title, &task.OwnerId, &task.Description)
+	err := row.Scan(&task.Id, &task.Title, &task.Description)
 	if err != nil {
 		return models.EmptyTask, err
 	}
@@ -75,36 +75,4 @@ func (db *database) UpdateTask(task models.Task) error {
 	query := `UPDATE tasks SET title = ?, description = ? WHERE id = ?`
 	_, err := db.conn.Exec(query, task.Title, task.Description, task.Id)
 	return err
-}
-
-func (db *database) InsertUser(user models.User) error {
-	query := `INSERT INTO users (id, username, pswd_hash) VALUES (?, ?, ?)`
-	_, err := db.conn.Exec(query, user.ID, user.Username, user.PswdHash)
-	return err
-}
-
-func (db *database) RetrieveUserByName(username string) (models.User, error) {
-	query := `SELECT id, username, pswd_hash FROM users WHERE username = ?`
-	row := db.conn.QueryRow(query, username)
-
-	var user models.User
-	err := row.Scan(&user.ID, &user.Username, &user.PswdHash)
-	if err != nil {
-		return models.EmptyUser, err
-	}
-
-	return user, nil
-}
-
-func (db *database) RetrieveUserById(id string) (models.User, error) {
-	query := `SELECT id, username, pswd_hash FROM users WHERE id = ?`
-	row := db.conn.QueryRow(query, id)
-
-	var user models.User
-	err := row.Scan(&user.ID, &user.Username, &user.PswdHash)
-	if err != nil {
-		return models.EmptyUser, err
-	}
-
-	return user, nil
 }

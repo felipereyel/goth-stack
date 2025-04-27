@@ -3,13 +3,12 @@ package routes
 import (
 	"goth/internal/components"
 	"goth/internal/controllers"
-	"goth/internal/models"
 
 	"github.com/gofiber/fiber/v2"
 )
 
-func taskList(tc *controllers.TaskController, c *fiber.Ctx, user models.User) error {
-	tasks, err := tc.ListTasks(user.ID)
+func taskList(tc *controllers.TaskController, c *fiber.Ctx) error {
+	tasks, err := tc.ListTasks()
 	if err != nil {
 		return err
 	}
@@ -17,8 +16,8 @@ func taskList(tc *controllers.TaskController, c *fiber.Ctx, user models.User) er
 	return sendPage(c, components.TaskListPage(tasks))
 }
 
-func taskNew(tc *controllers.TaskController, c *fiber.Ctx, user models.User) error {
-	task, err := tc.CreateTask(user.ID)
+func taskNew(tc *controllers.TaskController, c *fiber.Ctx) error {
+	task, err := tc.CreateTask()
 	if err != nil {
 		return err
 	}
@@ -26,9 +25,9 @@ func taskNew(tc *controllers.TaskController, c *fiber.Ctx, user models.User) err
 	return c.Redirect("/edit/" + task.Id)
 }
 
-func taskEdit(tc *controllers.TaskController, c *fiber.Ctx, user models.User) error {
+func taskEdit(tc *controllers.TaskController, c *fiber.Ctx) error {
 	taskId := c.Params("id")
-	task, err := tc.RetrieveTask(user.ID, taskId)
+	task, err := tc.RetrieveTask(taskId)
 
 	if err != nil {
 		return err
@@ -37,7 +36,7 @@ func taskEdit(tc *controllers.TaskController, c *fiber.Ctx, user models.User) er
 	return sendPage(c, components.TaskEditPage(task))
 }
 
-func taskSave(tc *controllers.TaskController, c *fiber.Ctx, user models.User) error {
+func taskSave(tc *controllers.TaskController, c *fiber.Ctx) error {
 	var taskId = c.Params("id")
 	var taskChange controllers.TaskChange
 	err := c.BodyParser(&taskChange)
@@ -45,7 +44,7 @@ func taskSave(tc *controllers.TaskController, c *fiber.Ctx, user models.User) er
 		return err
 	}
 
-	if err := tc.UpdateTask(user.ID, taskId, taskChange); err != nil {
+	if err := tc.UpdateTask(taskId, taskChange); err != nil {
 		return err
 	}
 

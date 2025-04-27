@@ -18,21 +18,20 @@ func NewTaskController(dbRepo database.Database) *TaskController {
 	}
 }
 
-func (tc *TaskController) CreateTask(ownerId string) (models.Task, error) {
+func (tc *TaskController) CreateTask() (models.Task, error) {
 	task := models.Task{
 		Id:          models.GenerateId(),
 		Title:       "New Task",
 		Description: "New Task Description",
-		OwnerId:     ownerId,
 	}
 	return task, tc.DbRepo.CreateTask(task)
 }
 
-func (tc *TaskController) ListTasks(ownerId string) ([]models.Task, error) {
-	return tc.DbRepo.ListTasksByOwner(ownerId)
+func (tc *TaskController) ListTasks() ([]models.Task, error) {
+	return tc.DbRepo.ListTasks()
 }
 
-func (tc *TaskController) RetrieveTask(ownerId, taskId string) (models.Task, error) {
+func (tc *TaskController) RetrieveTask(taskId string) (models.Task, error) {
 	task, err := tc.DbRepo.RetrieveTaskById(taskId)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -42,15 +41,11 @@ func (tc *TaskController) RetrieveTask(ownerId, taskId string) (models.Task, err
 		return models.EmptyTask, err
 	}
 
-	if task.OwnerId != ownerId {
-		return models.EmptyTask, fiber.ErrNotFound
-	}
-
 	return task, nil
 }
 
-func (tc *TaskController) DeleteTask(ownerId, taskId string) error {
-	_, err := tc.RetrieveTask(ownerId, taskId)
+func (tc *TaskController) DeleteTask(taskId string) error {
+	_, err := tc.RetrieveTask(taskId)
 	if err != nil {
 		return err
 	}
@@ -63,8 +58,8 @@ type TaskChange struct {
 	Description string `json:"description"`
 }
 
-func (tc *TaskController) UpdateTask(ownerId, taskId string, changes TaskChange) error {
-	task, err := tc.RetrieveTask(ownerId, taskId)
+func (tc *TaskController) UpdateTask(taskId string, changes TaskChange) error {
+	task, err := tc.RetrieveTask(taskId)
 	if err != nil {
 		return err
 	}

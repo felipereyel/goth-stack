@@ -55,13 +55,13 @@ templ ErrorPage() {
     }
 }
 
-templ authenticatedPage(title string, breadcrumb, description string) {
+templ headedPage(title string, breadcrumb, description string) {
     @rawPage(title) {
         <div class="px-4 sm:px-8 max-w-5xl m-auto">
             <div class="flex flex-col">
                 <div class="flex flex-row justify-between items-center">
                     <a href="/" class="text-2xl">{breadcrumb}</a>
-                    <a href="/auth/logout" class="bg-slate-800 border border-slate-600 rounded px-2">Logout</a>
+                    <a href="/" class="bg-slate-800 border border-slate-600 rounded px-2">???</a>
                 </div>
                 if description != "" {
                     <p class="mt-2 text-xs mb-4 text-gray-500">{description}</p>
@@ -74,79 +74,10 @@ templ authenticatedPage(title string, breadcrumb, description string) {
     }
 }
 
-templ PostLogoutPage() {
-    @rawPage("Logout") {
-        <div class="px-4 sm:px-8 max-w-5xl m-auto">
-            <div class="flex flex-col">
-                <div class="flex flex-row justify-between items-center">
-                    <a href="/" class="text-2xl">Home</a>
-                    <div>
-                    <a href="/auth/login" class="bg-slate-800 border border-slate-600 rounded px-2">Login</a>
-                    <a href="/auth/register" class="bg-slate-800 border border-slate-600 rounded px-2">Register</a>
-                    </div>
-                </div>
-                <p class="mt-2 text-xs mb-4 text-gray-500">You need to login to proceed</p>
-            </div>
-        </div>
-    }
-}
-
-templ LoginPage() {
-    @rawPage("Login") {
-        <div class="px-4 h-screen sm:px-8 max-w-5xl m-auto">
-            <div class="h-full flex flex-col">
-                <div class="flex flex-row justify-between items-center">
-                    <a href="/" class="text-2xl">Login</a>
-                    <div>
-                    <a href="/auth/register" class="bg-slate-800 border border-slate-600 rounded px-2">Register</a>
-                    </div>
-                </div>
-                <form hx-post="/auth/login" class="mx-auto h-full flex flex-col justify-center">
-                    <div class="relative z-0 w-full mb-5 group">
-                        <input name="username" id="username" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
-                        <label for="username" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Username</label>
-                    </div>
-                    <div class="relative z-0 w-full mb-5 group">
-                        <input type="password" name="password" id="password" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
-                        <label for="password" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Password</label>
-                    </div>
-                    <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
-                </form>
-            </div>
-        </div>
-    }
-}
-
-templ RegisterPage() {
-    @rawPage("Register") {
-        <div class="px-4 h-screen sm:px-8 max-w-5xl m-auto">
-            <div class="h-full flex flex-col">
-                <div class="flex flex-row justify-between items-center">
-                    <a href="/" class="text-2xl">Register</a>
-                    <div>
-                    <a href="/auth/login" class="bg-slate-800 border border-slate-600 rounded px-2">Login</a>
-                    </div>
-                </div>
-                <form hx-post="/auth/register" class="mx-auto h-full flex flex-col justify-center">
-                    <div class="relative z-0 w-full mb-5 group">
-                        <input name="username" id="username" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
-                        <label for="username" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Username</label>
-                    </div>
-                    <div class="relative z-0 w-full mb-5 group">
-                        <input type="password" name="password" id="password" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
-                        <label for="password" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Password</label>
-                    </div>
-                    <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
-                </form>
-            </div>
-        </div>
-    }
-}
-
 // Tasks Views
 
 templ TaskListPage(tasks []models.Task) {
-    @authenticatedPage("Tasks List", "Tasks", "Open Tasks To Do") {
+    @headedPage("Tasks List", "Tasks", "Open Tasks To Do") {
         <div>
             <ul id="wrapper" class="border border-slate-600 rounded overflow-hidden shadow-md">
                 if len(tasks) > 0 {
@@ -169,7 +100,7 @@ templ TaskListPage(tasks []models.Task) {
 }
 
 templ TaskEditPage(task models.Task) {
-    @authenticatedPage("Task Editor", fmt.Sprintf("Tasks > %s", task.Title), "Edit this task") {
+    @headedPage("Task Editor", fmt.Sprintf("Tasks > %s", task.Title), "Edit this task") {
         <div>
             <div class="flex flex-col">
                 <label for="title" class="text-xs mb-1">Title</label>
