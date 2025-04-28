@@ -1,5 +1,5 @@
 # Build the Go binary
-FROM golang:1.23-alpine AS goapp
+FROM golang:1.24-alpine AS goapp
 
 WORKDIR /app
 
@@ -20,4 +20,4 @@ FROM alpine:latest as release
 COPY --from=goapp /app/goapp /goapp
 
 WORKDIR /app
-CMD ["/goapp", "serve"]
+CMD ["/goapp", "serve", "--http", ":8090"]
