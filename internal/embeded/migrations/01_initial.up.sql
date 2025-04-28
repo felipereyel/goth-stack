@@ -1,8 +1,0 @@
--- SQLITE
-
-CREATE TABLE users (
-    id UUID PRIMARY KEY,
-    pswd_hash TEXT NOT NULL,
-    username TEXT NOT NULL UNIQUE,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-);

@@ -1,45 +1,27 @@
 package cmd
 
 import (
-	"goth/internal/cmd/migrate"
-	"goth/internal/cmd/server"
+	"goth/internal/config"
+	"goth/internal/routes"
+	"log"
 
-	"github.com/spf13/cobra"
+	"github.com/pocketbase/pocketbase"
+	"github.com/pocketbase/pocketbase/plugins/migratecmd"
+
+	_ "goth/internal/migrations" // register all migrations
 )
 
-var rootCmd = &cobra.Command{
-	Use:   "goth",
-	Short: "goth app CLI",
-}
+func Root() {
+	app := pocketbase.New()
+	cfg := config.GetServerConfigs()
+	app.OnServe().BindFunc(routes.SetupRoutes)
+	app.Settings().Meta.HideControls = cfg.IsProd
 
-var serveCmd = &cobra.Command{
-	Use:   "serve",
-	Short: "Serve the application",
-	Run:   server.Serve,
-}
+	if !cfg.IsProd {
+		migratecmd.MustRegister(app, app.RootCmd, migratecmd.Config{})
+	}
 
-var migrateUpCmd = &cobra.Command{
-	Use:   "migrate:up",
-	Short: "Migrates Up the database",
-	Run:   migrate.Up,
-}
-
-var migrateDownCmd = &cobra.Command{
-	Use:   "migrate:down",
-	Short: "Migrates Down the database",
-	Run:   migrate.Down,
-	Args:  cobra.ExactArgs(1),
-}
-
-func init() {
-	rootCmd.AddCommand(serveCmd)
-	rootCmd.AddCommand(migrateUpCmd)
-	rootCmd.AddCommand(migrateDownCmd)
-}
-
-func Execute() {
-	err := rootCmd.Execute()
-	if err != nil {
-		panic(err.Error())
+	if err := app.Start(); err != nil {
+		log.Fatal(err)
 	}
 }

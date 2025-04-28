@@ -1,53 +1,89 @@
 package routes
 
 import (
+	"errors"
 	"goth/internal/components"
-	"goth/internal/controllers"
 	"goth/internal/models"
+	"goth/internal/repositories/database"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/pocketbase/pocketbase/core"
 )
 
-func taskList(tc *controllers.TaskController, c *fiber.Ctx, user models.User) error {
-	tasks, err := tc.ListTasks(user.ID)
+func taskList(e *core.RequestEvent) error {
+	db := database.NewDatabaseRepo(e.App)
+	tasks, err := db.ListTasks()
 	if err != nil {
 		return err
 	}
 
-	return sendPage(c, components.TaskListPage(tasks))
+	return sendPage(e, components.TaskListPage(tasks))
 }
 
-func taskNew(tc *controllers.TaskController, c *fiber.Ctx, user models.User) error {
-	task, err := tc.CreateTask(user.ID)
-	if err != nil {
+func taskNew(e *core.RequestEvent) error {
+	db := database.NewDatabaseRepo(e.App)
+
+	task := models.Task{
+		Id:          models.GenerateId(),
+		Title:       "New Task",
+		Description: "New Task Description",
+	}
+
+	if err := db.CreateTask(task); err != nil {
 		return err
 	}
 
-	return c.Redirect("/edit/" + task.Id)
+	return e.Redirect(302, "/edit/"+task.Id)
 }
 
-func taskEdit(tc *controllers.TaskController, c *fiber.Ctx, user models.User) error {
-	taskId := c.Params("id")
-	task, err := tc.RetrieveTask(user.ID, taskId)
+func taskEdit(e *core.RequestEvent) error {
+	taskId := e.Request.PathValue("id")
+	if taskId == "" {
+		return errors.New("task id is required")
+	}
+
+	db := database.NewDatabaseRepo(e.App)
+	task, err := db.RetrieveTaskById(taskId)
 
 	if err != nil {
 		return err
 	}
 
-	return sendPage(c, components.TaskEditPage(task))
+	return sendPage(e, components.TaskEditPage(task))
 }
 
-func taskSave(tc *controllers.TaskController, c *fiber.Ctx, user models.User) error {
-	var taskId = c.Params("id")
-	var taskChange controllers.TaskChange
-	err := c.BodyParser(&taskChange)
+type TaskChange struct {
+	Title       string `json:"title" form:"title"`
+	Description string `json:"description" form:"description"`
+}
+
+func taskSave(e *core.RequestEvent) error {
+	taskId := e.Request.PathValue("id")
+	if taskId == "" {
+		return errors.New("task id is required")
+	}
+
+	var changes TaskChange
+	if err := e.BindBody(&changes); err != nil {
+		return err
+	}
+
+	db := database.NewDatabaseRepo(e.App)
+	task, err := db.RetrieveTaskById(taskId)
 	if err != nil {
 		return err
 	}
 
-	if err := tc.UpdateTask(user.ID, taskId, taskChange); err != nil {
+	if changes.Title != "" {
+		task.Title = changes.Title
+	}
+
+	if changes.Description != "" {
+		task.Description = changes.Description
+	}
+
+	if err := db.UpdateTask(task); err != nil {
 		return err
 	}
 
-	return c.SendStatus(fiber.StatusOK)
+	return e.String(200, "ok")
 }

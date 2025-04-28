@@ -1,13 +1,19 @@
 package routes
 
 import (
+	"bytes"
 	"context"
+	"net/http"
 
 	"github.com/a-h/templ"
-	"github.com/gofiber/fiber/v2"
+	"github.com/pocketbase/pocketbase/core"
 )
 
-func sendPage(c *fiber.Ctx, page templ.Component) error {
-	c.Set("Content-Type", "text/html")
-	return page.Render(context.Background(), c)
+func sendPage(e *core.RequestEvent, page templ.Component) error {
+	buf := new(bytes.Buffer)
+	if err := page.Render(context.Background(), buf); err != nil {
+		return err
+	}
+
+	return e.HTML(http.StatusOK, buf.String())
 }
